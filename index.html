@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charles Imbeau — Web Developer</title>
+  <meta name="description" content="Charles Imbeau is a web developer who builds and ships real products. Portfolio featuring LootRadar, LaunchKit Tools, MindPrint, and more.">
+  <meta name="author" content="Charles Imbeau">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Charles Imbeau — Web Developer">
+  <meta property="og:description" content="Web developer who builds and ships real products.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://charlesimbeau.dev">
+  <meta property="og:image" content="https://charlesimbeau.dev/og-image.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Charles Imbeau — Web Developer">
+  <meta name="twitter:description" content="Web developer who builds and ships real products.">
+
+  <!-- Favicon placeholder -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">charles<span>.</span>dev</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="container hero-content">
+      <p class="hero-eyebrow">Hi, I'm Charles Imbeau</p>
+      <h1>I build &amp; ship<br>real products.</h1>
+      <p>Web developer focused on creating polished, functional tools that people actually use — from game deal aggregators to mental health screeners.</p>
+      <div class="hero-buttons">
+        <a href="#projects" class="btn btn-primary">View Projects ↓</a>
+        <a href="https://github.com/charlesimbeau-tech" target="_blank" rel="noopener" class="btn btn-outline">GitHub →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <p class="section-label fade-in">About</p>
+      <h2 class="section-title fade-in">A bit about me</h2>
+      <div class="about-content fade-in">
+        <p>I'm a web developer who cares about shipping. I design, build, and deploy full products — handling everything from UI to CI/CD pipelines. My stack is intentionally lean: HTML, CSS, JavaScript, and smart automation with GitHub Actions. No framework bloat, no unnecessary complexity.</p>
+        <br>
+        <p>Every project in my portfolio is live, maintained, and used by real people. I believe the best way to learn is to build things that matter.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container">
+      <p class="section-label fade-in">Projects</p>
+      <h2 class="section-title fade-in">Things I've built</h2>
+      <div class="projects-grid">
+
+        <div class="project-card fade-in">
+          <h3>LootRadar</h3>
+          <p>Game deals aggregator with a cyberpunk-inspired UI. Tracks prices across 15+ stores with hourly auto-caching via GitHub Actions. Features genre filters, search, and blog content.</p>
+          <div class="project-tags">
+            <span class="tag">HTML/CSS/JS</span>
+            <span class="tag">GitHub Actions</span>
+            <span class="tag">API Integration</span>
+            <span class="tag">Caching</span>
+          </div>
+          <div class="project-links">
+            <a href="https://thelootradar.com" target="_blank" rel="noopener">Live Site ↗</a>
+            <a href="https://github.com/charlesimbeau-tech/lootradar" target="_blank" rel="noopener">Source →</a>
+          </div>
+        </div>
+
+        <div class="project-card fade-in">
+          <h3>LaunchKit Tools</h3>
+          <p>Curated directory of 130+ AI tools with category and pricing filters, detail pages, and a premium woodgrain/brass theme. Built to help people discover the right AI tools fast.</p>
+          <div class="project-tags">
+            <span class="tag">HTML/CSS/JS</span>
+            <span class="tag">Directory</span>
+            <span class="tag">Filtering</span>
+            <span class="tag">GitHub Pages</span>
+          </div>
+          <div class="project-links">
+            <a href="https://launchkittools.com" target="_blank" rel="noopener">Live Site ↗</a>
+            <a href="https://github.com/charlesimbeau-tech/launchkittools" target="_blank" rel="noopener">Source →</a>
+          </div>
+        </div>
+
+        <div class="project-card fade-in">
+          <h3>MindPrint</h3>
+          <p>Free mental health screening tool featuring 23 validated clinical instruments including PHQ-9 and GAD-7. Includes triage questionnaire and PDF export — fully client-side with zero data collection.</p>
+          <div class="project-tags">
+            <span class="tag">HTML/CSS/JS</span>
+            <span class="tag">Clinical Tools</span>
+            <span class="tag">PDF Export</span>
+            <span class="tag">Privacy-First</span>
+          </div>
+          <div class="project-links">
+            <a href="https://charlesimbeau-tech.github.io/Mindprint/" target="_blank" rel="noopener">Live Site ↗</a>
+            <a href="https://github.com/charlesimbeau-tech/Mindprint" target="_blank" rel="noopener">Source →</a>
+          </div>
+        </div>
+
+        <div class="project-card fade-in">
+          <h3>Sterling Point</h3>
+          <p>Luxury cottage rental site for a property on Lake Joseph, Muskoka. Clean, image-forward design that captures the premium feel of the location.</p>
+          <div class="project-tags">
+            <span class="tag">HTML/CSS/JS</span>
+            <span class="tag">Responsive Design</span>
+            <span class="tag">GitHub Pages</span>
+          </div>
+          <div class="project-links">
+            <a href="https://charlesimbeau-tech.github.io/Sterling-Point/" target="_blank" rel="noopener">Live Site ↗</a>
+            <a href="https://github.com/charlesimbeau-tech/Sterling-Point" target="_blank" rel="noopener">Source →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="container">
+      <p class="section-label fade-in">Skills</p>
+      <h2 class="section-title fade-in">Tech I work with</h2>
+      <div class="skills-grid fade-in">
+        <span class="skill-badge">HTML5</span>
+        <span class="skill-badge">CSS3</span>
+        <span class="skill-badge">JavaScript</span>
+        <span class="skill-badge">Node.js</span>
+        <span class="skill-badge">GitHub Actions</span>
+        <span class="skill-badge">GitHub Pages</span>
+        <span class="skill-badge">Cloudflare</span>
+        <span class="skill-badge">REST APIs</span>
+        <span class="skill-badge">Responsive Design</span>
+        <span class="skill-badge">CI/CD</span>
+        <span class="skill-badge">Git</span>
+        <span class="skill-badge">SEO</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <p class="section-label fade-in">Contact</p>
+      <h2 class="section-title fade-in">Let's connect</h2>
+      <div class="contact-content fade-in">
+        <p>I'm open to freelance work, collaborations, and full-time opportunities. If you're building something interesting, I'd love to hear about it.</p>
+        <div class="contact-links">
+          <a href="mailto:charlesimbeau7@gmail.com" class="btn btn-primary">Email Me →</a>
+          <a href="https://github.com/charlesimbeau-tech" target="_blank" rel="noopener" class="btn btn-outline">GitHub →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Charles Imbeau. Built with HTML, CSS &amp; JS — nothing more.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

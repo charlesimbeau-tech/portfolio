@@ -63,10 +63,27 @@
     </div>
   </nav>
 
-  <section class="hero" style="padding: 60px 20px;">
+  <section class="hero" style="padding: 60px 20px; position: relative;">
     <div class="container hero-content">
       <h1>Blog</h1>
       <p style="margin-top: 10px; font-size: 18px; opacity: 0.8;">Technical deep dives, problem-solving, and lessons from building products.</p>
+      
+      <!-- Scroll Indicator -->
+      <div style="margin-top: 50px; text-align: center;">
+        <svg width="24" height="40" viewBox="0 0 24 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto; animation: bounce 2s infinite; opacity: 0.6;">
+          <path d="M12 2L12 32M7 27L12 32L17 27" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <style>
+        @keyframes bounce {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+      </style>
     </div>
   </section>
 

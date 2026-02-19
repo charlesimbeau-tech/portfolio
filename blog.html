@@ -63,8 +63,11 @@
     </div>
   </nav>
 
-  <section class="hero" style="padding: 60px 20px; position: relative;">
-    <div class="container hero-content">
+  <section class="hero" style="padding: 60px 20px; position: relative; overflow: hidden;">
+    <!-- Mist Background -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(100, 120, 255, 0), rgba(100, 120, 255, 0.15)), radial-gradient(ellipse 100% 80% at 50% 0%, rgba(120, 100, 255, 0.08) 0%, transparent 70%); pointer-events: none; filter: blur(40px);"></div>
+    
+    <div class="container hero-content" style="position: relative; z-index: 1;">
       <h1>Blog</h1>
       <p style="margin-top: 10px; font-size: 18px; opacity: 0.8;">Technical deep dives, problem-solving, and lessons from building products.</p>
       
@@ -87,8 +90,11 @@
     </div>
   </section>
 
-  <section style="padding: 60px 20px;">
-    <div class="container" style="max-width: 850px;">
+  <section id="articles-section" style="padding: 60px 20px; position: relative;">
+    <!-- Intensifying Mist Background -->
+    <div id="mist-bg" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(100, 120, 255, 0) 0%, rgba(100, 120, 255, 0.25) 100%); pointer-events: none; filter: blur(60px); opacity: 0; z-index: 0; transition: opacity 0.1s ease-out;"></div>
+    
+    <div class="container" style="max-width: 850px; position: relative; z-index: 1;">
       
       <div style="display: grid; gap: 25px;">
 
@@ -118,5 +124,16 @@
   </footer>
 
   <script src="app.js"></script>
+  <script>
+    // Intensify mist as user scrolls down
+    const mistBg = document.getElementById('mist-bg');
+    const articlesSection = document.getElementById('articles-section');
+
+    window.addEventListener('scroll', () => {
+      const scrollPos = window.scrollY;
+      const opacity = Math.min(scrollPos / 800, 1); // Reaches max opacity after scrolling 800px
+      mistBg.style.opacity = opacity;
+    });
+  </script>
 </body>
 </html>

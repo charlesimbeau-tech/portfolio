@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The UTF-8 PowerShell Bug That Broke My Emoji - Charles Imbeau</title>
+  <meta name="description" content="How PowerShell corrupts Unicode characters in JSON, and the escape sequence fix that saved me hours of debugging.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .article-container {
+      max-width: 750px;
+      margin: 0 auto;
+    }
+    .article-meta {
+      font-size: 14px;
+      opacity: 0.6;
+      margin-bottom: 40px;
+    }
+    .article-content {
+      line-height: 1.7;
+      font-size: 16px;
+    }
+    .article-content h2 {
+      font-size: 24px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    .article-content h3 {
+      font-size: 20px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    .article-content p {
+      margin-bottom: 20px;
+    }
+    .article-content code {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .code-block {
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      border-left: 3px solid rgba(100,150,255,0.5);
+    }
+    .code-block code {
+      background: none;
+      padding: 0;
+      font-size: 13px;
+    }
+    .key-takeaway {
+      background: rgba(100,150,255,0.1);
+      padding: 20px;
+      border-radius: 6px;
+      margin: 30px 0;
+      border-left: 3px solid rgba(100,150,255,0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">charles<span>.</span>dev</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="/#work">Work</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section style="padding: 60px 20px;">
+    <div class="article-container">
+      <a href="/blog.html" style="opacity: 0.6; text-decoration: none; font-size: 14px;">← Back to Blog</a>
+      
+      <article style="margin-top: 40px;">
+        <h1 style="font-size: 36px; margin-bottom: 15px;">The UTF-8 PowerShell Bug That Broke My Emoji</h1>
+        <div class="article-meta">
+          <span>Published February 18, 2026</span> · <span>5 min read</span>
+        </div>
+
+        <div class="article-content">
+          <p>I was building JSON data for LootRadar — a game deals aggregator — and everything was moving smoothly. Then I tried to add emoji to the site and PowerShell silently corrupted every single one. No errors. No warnings. Just broken characters scattered throughout my data.</p>
+
+          <p>This wasn't a framework bug. It wasn't a library issue. It was a classic Unicode encoding problem that cost me two hours to track down. Here's what happened, why it happened, and how to avoid it.</p>
+
+          <h2>The Problem</h2>
+
+          <p>I was using PowerShell to generate JSON with emoji (like 🎮 for games). Simple enough:</p>
+
+          <div class="code-block"><code>$data = @{
+  title = "🎮 Best Deals Today"
+  emoji = "🎮"
+}
+$json = $data | ConvertTo-Json
+Set-Content -Path "output.json" -Value $json</code></div>
+
+          <p>Looks innocent, right? The JSON would render on the site, but the emoji would show up as garbled Unicode replacement characters. The JSON was technically valid, but the characters were corrupted at the byte level.</p>
+
+          <p><strong>The root cause:</strong> PowerShell's <code>Set-Content</code> cmdlet uses the wrong default encoding on Windows. It defaults to ASCII or an older code page instead of UTF-8. When it writes emoji (which requires multi-byte UTF-8 sequences), those bytes get mangled.</p>
+
+          <h2>The Fix: Force UTF-8 Encoding</h2>
+
+          <p>The solution is to explicitly specify UTF-8 encoding when writing:</p>
+
+          <div class="code-block"><code>$data = @{
+  title = "🎮 Best Deals Today"
+  emoji = "🎮"
+}
+$json = $data | ConvertTo-Json
+Set-Content -Path "output.json" -Value $json -Encoding UTF8</code></div>
+
+          <p>That's it. Add <code>-Encoding UTF8</code> and emoji render perfectly.</p>
+
+          <div class="key-takeaway">
+            <strong>The Lesson:</strong> Always explicitly set UTF-8 encoding in PowerShell when writing JSON or files with special characters. Don't rely on defaults — they're often wrong.
+          </div>
+
+          <h2>The Better Solution: Escape Sequences</h2>
+
+          <p>But there's a catch. Even with <code>-Encoding UTF8</code>, if your script is being executed in different environments or by different tools, you might still hit encoding issues. So for mission-critical data, I switched to Unicode escape sequences:</p>
+
+          <div class="code-block"><code>$data = @{
+  title = "\u{1F3AE} Best Deals Today"
+  emoji = "\u{1F3AE}"
+}
+$json = $data | ConvertTo-Json
+Set-Content -Path "output.json" -Value $json</code></div>
+
+          <p>Unicode escape sequences (<code>\u{1F3AE}</code>) represent emoji in their numeric form. They're ASCII-safe, so they survive any encoding conversion. The browser renders them as emoji automatically.</p>
+
+          <h2>Why This Matters</h2>
+
+          <p>This isn't just an edge case. Any time you're:</p>
+          <ul style="margin: 15px 0; padding-left: 30px;">
+            <li>Building JSON or config files with special characters</li>
+            <li>Automating data generation in PowerShell</li>
+            <li>Feeding data to web apps that care about encoding</li>
+            <li>Working in multi-environment setups</li>
+          </ul>
+
+          <p>...you'll hit this. It's a silent killer because PowerShell doesn't error. It just corrupts.</p>
+
+          <h2>The Gotcha</h2>
+
+          <p>One more thing: even if you fix the encoding, some older systems or misconfigured servers might still mess it up. That's why Unicode escape sequences are the nuclear option — they're bulletproof.</p>
+
+          <p>For LootRadar, I switched to escape sequences. Zero emoji corruption. Zero encoding headaches.</p>
+
+          <h2>Takeaway</h2>
+
+          <p><strong>Always:</strong></p>
+          <ul style="margin: 15px 0; padding-left: 30px;">
+            <li>Specify <code>-Encoding UTF8</code> when writing files in PowerShell</li>
+            <li>Use Unicode escape sequences for anything that leaves your machine</li>
+            <li>Test with emoji and special characters during development</li>
+          </ul>
+
+          <p>Your future debugging self will thank you.</p>
+        </div>
+      </article>
+
+      <hr style="opacity: 0.2; margin: 60px 0;">
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="/blog.html" class="btn btn-outline">Back to Blog →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="margin-top: 80px;">
+    <p>© 2026 Charles Imbeau · Columbia, SC · Built with code, not templates.</p>
+  </footer>
+
+  <script src="../app.js"></script>
+</body>
+</html>

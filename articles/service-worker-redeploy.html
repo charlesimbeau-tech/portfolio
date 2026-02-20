@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Your Service Worker is Breaking on Redeploy - Charles Imbeau</title>
+  <meta name="description" content="Service workers survive deploys and silently serve stale files. Here's how to fix cache-first nightmares, CORS ghosts, and the nuclear unregister option.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .article-container {
+      max-width: 750px;
+      margin: 0 auto;
+    }
+    .article-meta {
+      font-size: 14px;
+      opacity: 0.6;
+      margin-bottom: 40px;
+    }
+    .article-content {
+      line-height: 1.7;
+      font-size: 16px;
+    }
+    .article-content h2 {
+      font-size: 24px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    .article-content h3 {
+      font-size: 20px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    .article-content p {
+      margin-bottom: 20px;
+    }
+    .article-content code {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .code-block {
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      border-left: 3px solid rgba(100,150,255,0.5);
+    }
+    .code-block code {
+      background: none;
+      padding: 0;
+      font-size: 13px;
+    }
+    .key-takeaway {
+      background: rgba(100,150,255,0.1);
+      padding: 20px;
+      border-radius: 6px;
+      margin: 30px 0;
+      border-left: 3px solid rgba(100,150,255,0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Intensifying Mist Background -->
+  <div id="mist-bg" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(100, 120, 255, 0) 0%, rgba(100, 120, 255, 0.25) 100%); pointer-events: none; filter: blur(60px); opacity: 0; z-index: 0; transition: opacity 0.1s ease-out;"></div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">charles<span>.</span>dev</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="/#work">Work</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section style="padding: 60px 20px;">
+    <div class="article-container">
+      <a href="/blog.html" style="opacity: 0.6; text-decoration: none; font-size: 14px;">&larr; Back to Blog</a>
+      
+      <article style="margin-top: 40px;">
+        <h1 style="font-size: 36px; margin-bottom: 15px;">Why Your Service Worker is Breaking on Redeploy</h1>
+        <div class="article-meta">
+          <span>Published February 20, 2026</span> &middot; <span>6 min read</span>
+        </div>
+
+        <div class="article-content">
+          <p>You push a fix. You deploy. You refresh the page. Nothing changed.</p>
+
+          <p>You hard-refresh. Clear the cache. Open an incognito window. The old version is <em>still there</em>. Worse &mdash; your API calls are throwing CORS errors that didn't exist five minutes ago.</p>
+
+          <p>The culprit? Your service worker is still alive, silently serving stale files from its cache.</p>
+
+          <h2>The Problem</h2>
+
+          <p>Service workers are background scripts that intercept network requests. They're powerful &mdash; they enable offline support, push notifications, and instant page loads. But they come with a catch that bites almost every developer at least once:</p>
+
+          <p><strong>Service workers don't die when you deploy.</strong></p>
+
+          <p>Here's what happens:</p>
+
+          <ol style="margin: 15px 0; padding-left: 30px; line-height: 1.8;">
+            <li>User visits your site &rarr; browser installs <code>sw.js</code></li>
+            <li>Service worker caches your HTML, CSS, JS, and API responses</li>
+            <li>You deploy a new version with bug fixes</li>
+            <li>User returns &rarr; the <em>old</em> service worker intercepts the request</li>
+            <li>Old service worker serves the <em>cached</em> version of your files</li>
+            <li>Your fix is invisible</li>
+          </ol>
+
+          <p>The browser <em>does</em> check for an updated <code>sw.js</code> on each visit, but the new service worker enters a <strong>"waiting"</strong> state. It won't activate until every tab running the old version is closed. Not refreshed &mdash; <em>closed</em>.</p>
+
+          <h2>When It Gets Worse: CORS and API Caching</h2>
+
+          <p>The real pain starts when your service worker caches API responses. I hit this building <a href="https://thelootradar.com" style="color: #6495ff;">LootRadar</a> &mdash; a game deals aggregator that pulls from the CheapShark API.</p>
+
+          <p>My service worker was using a "cache-first" strategy:</p>
+
+          <div class="code-block"><code>self.addEventListener('fetch', (event) =&gt; {
+  event.respondWith(
+    caches.match(event.request).then((cached) =&gt; {
+      return cached || fetch(event.request);
+    })
+  );
+});</code></div>
+
+          <p>This cached <em>everything</em> &mdash; including API responses from a different origin. When I switched from direct API calls to a CORS proxy, the service worker kept serving the old cached responses (with the old CORS headers). The result: a wall of CORS errors in the console, but only for returning visitors.</p>
+
+          <div class="key-takeaway">
+            <strong>The worst kind of bug:</strong> New visitors? Site works perfectly. Returning visitors? Completely broken. It's invisible to you but visible to your users.
+          </div>
+
+          <h2>The Fix</h2>
+
+          <h3>1. The Nuclear Option: Unregister Everything</h3>
+
+          <p>If you've already shipped a broken service worker, you need to clean up. Add this to your main page's JavaScript:</p>
+
+          <div class="code-block"><code>// Unregister all service workers and clear caches
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) =&gt; {
+    registrations.forEach((registration) =&gt; {
+      registration.unregister();
+    });
+  });
+
+  // Also clear the caches they left behind
+  caches.keys().then((names) =&gt; {
+    names.forEach((name) =&gt; caches.delete(name));
+  });
+}</code></div>
+
+          <p>Ship this in your HTML, <em>not</em> in the service worker itself. The service worker is the problem &mdash; you can't trust it to fix itself.</p>
+
+          <h3>2. Skip Waiting (If You Want to Keep It)</h3>
+
+          <p>If you actually need a service worker (for offline support, PWA requirements, etc.), make new versions activate immediately:</p>
+
+          <div class="code-block"><code>// In sw.js
+self.addEventListener('install', (event) =&gt; {
+  self.skipWaiting(); // Don't wait for old tabs to close
+});
+
+self.addEventListener('activate', (event) =&gt; {
+  // Delete old caches
+  event.waitUntil(
+    caches.keys().then((names) =&gt; {
+      return Promise.all(
+        names.filter((name) =&gt; name !== CURRENT_CACHE)
+             .map((name) =&gt; caches.delete(name))
+      );
+    })
+  );
+  // Take control of all open tabs immediately
+  clients.claim();
+});</code></div>
+
+          <p><code>skipWaiting()</code> + <code>clients.claim()</code> = new service worker takes over immediately on deploy.</p>
+
+          <h3>3. Version Your Cache</h3>
+
+          <p>Never use a static cache name. Include a version or hash:</p>
+
+          <div class="code-block"><code>const CURRENT_CACHE = 'v3'; // Bump on every deploy
+
+self.addEventListener('install', (event) =&gt; {
+  event.waitUntil(
+    caches.open(CURRENT_CACHE).then((cache) =&gt; {
+      return cache.addAll(['/index.html', '/style.css', '/app.js']);
+    })
+  );
+  self.skipWaiting();
+});</code></div>
+
+          <p>When the cache name changes, the old cache becomes orphaned and gets cleaned up in the <code>activate</code> handler.</p>
+
+          <h2>Gotchas</h2>
+
+          <p><strong>Don't cache API responses with cache-first.</strong> Use "network-first" for anything dynamic:</p>
+
+          <div class="code-block"><code>// Network-first: try the network, fall back to cache
+event.respondWith(
+  fetch(event.request)
+    .then((response) =&gt; {
+      const clone = response.clone();
+      caches.open(CURRENT_CACHE)
+        .then((cache) =&gt; cache.put(event.request, clone));
+      return response;
+    })
+    .catch(() =&gt; caches.match(event.request))
+);</code></div>
+
+          <p><strong><code>Update on reload</code> only works in DevTools.</strong> Chrome's "Update on reload" checkbox in the Application tab is a development convenience. Your users don't have it checked.</p>
+
+          <p><strong><code>Clear-Site-Data</code> header.</strong> If you have server control, you can send <code>Clear-Site-Data: "storage"</code> as a one-time response header to wipe everything. Nuclear, but effective.</p>
+
+          <p><strong>GitHub Pages doesn't let you set response headers.</strong> If you're on a static host without header control, the unregister script in your HTML is your only option.</p>
+
+          <h2>Takeaway</h2>
+
+          <p>Service workers are a one-way door. Once a user's browser installs one, it persists across deploys, across sessions, across everything &mdash; until it's explicitly replaced or unregistered.</p>
+
+          <p>Before you add a service worker, ask: <strong>do I actually need offline support?</strong> If the answer is "not really, I just thought it was cool" &mdash; skip it. The caching headaches aren't worth it for a site that requires an internet connection anyway.</p>
+
+          <p>If you do need one: version your caches, use <code>skipWaiting()</code>, never cache API responses with cache-first, and always have an unregister escape hatch ready.</p>
+
+          <p>The best service worker bug is the one you never ship.</p>
+        </div>
+      </article>
+
+      <hr style="opacity: 0.2; margin: 60px 0;">
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="/blog.html" class="btn btn-outline">Back to Blog &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="margin-top: 80px;">
+    <p>&copy; 2026 Charles Imbeau &middot; Columbia, SC &middot; Built with code, not templates.</p>
+  </footer>
+
+  <script src="../app.js"></script>
+  <script>
+    const mistBg = document.getElementById('mist-bg');
+    window.addEventListener('scroll', () => {
+      const scrollPos = window.scrollY;
+      const opacity = Math.min(scrollPos / 800, 1);
+      mistBg.style.opacity = opacity;
+    });
+  </script>
+</body>
+</html>

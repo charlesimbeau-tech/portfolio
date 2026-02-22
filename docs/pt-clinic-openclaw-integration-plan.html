@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenClaw Integration Plan for PT Clinics</title>
+  <style>
+    :root{--navy:#0b1f3a;--blue:#1f6feb;--teal:#12b3a8;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fbff}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);line-height:1.55;background:#fff}
+    .page{max-width:920px;margin:0 auto;padding:42px 54px}
+    .cover{background:linear-gradient(135deg,var(--navy),#153f78 55%,#1a5aa8);color:#fff;border-radius:16px;padding:34px;margin-bottom:28px}
+    .chip{display:inline-block;background:rgba(18,179,168,.22);border:1px solid rgba(18,179,168,.6);padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#ccfbf1}
+    h1{margin:0 0 8px;font-size:34px;letter-spacing:-.02em}
+    .sub{margin:0;color:#dbeafe}
+    h2{margin-top:30px;font-size:22px;color:var(--navy);border-bottom:2px solid #dbeafe;padding-bottom:7px}
+    h3{margin-top:18px;font-size:17px;color:#0f3a6d}
+    ul,ol{padding-left:22px} li{margin:6px 0}
+    .box{background:var(--bg);border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:10px;padding:12px 14px;margin:10px 0}
+    .teal{border-left-color:var(--teal)}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+    .kpi{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);border-radius:10px;padding:10px}
+    .kpi b{display:block;color:#a7f3d0;font-size:22px}
+    .footer{margin-top:30px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+    @media print{.page{padding:24px 32px} h2,h3,.box{page-break-inside:avoid}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="cover">
+      <h1>OpenClaw Deep Integration Plan</h1>
+      <p class="sub">For Physical Therapy Clinics (Operations + Front Desk + Owner Visibility)</p>
+      <p class="chip">90-Day Rollout • Security-First • ROI-Driven</p>
+      <div class="kpis">
+        <div class="kpi"><b>30–50%</b>Less admin busywork</div>
+        <div class="kpi"><b>Faster</b>Patient comm response</div>
+        <div class="kpi"><b>Higher</b>Operational reliability</div>
+      </div>
+    </section>
+
+    <h2>1) Strategic Objective</h2>
+    <p>Deploy an OpenClaw agent as a reliable operations layer across front desk workflows, daily clinic coordination, and owner-level reporting—without introducing compliance risk or staff friction.</p>
+
+    <h2>2) Role Design (Mode-Based Agent)</h2>
+    <h3>A) Front Desk Assistant</h3>
+    <ul>
+      <li>Triages inbound messages and drafts responses</li>
+      <li>Flags urgent messages and no-show risks</li>
+      <li>Supports appointment reminder flow</li>
+    </ul>
+    <h3>B) Operations Monitor</h3>
+    <ul>
+      <li>Watches service/gateway health, cron jobs, and failures</li>
+      <li>Alerts only on noteworthy or actionable changes</li>
+      <li>Maintains daily runbook checklist completion</li>
+    </ul>
+    <h3>C) Owner Briefing Agent</h3>
+    <ul>
+      <li>Morning summary, midday risk check, end-of-day wrap-up</li>
+      <li>Weekly KPI digest for decision-making</li>
+    </ul>
+
+    <h2>3) Core Integrations</h2>
+    <ul>
+      <li><b>Google Calendar:</b> schedule awareness, conflict detection, reminders</li>
+      <li><b>Gmail:</b> inbox triage and admin queue monitoring</li>
+      <li><b>Team channel (Discord/Signal):</b> internal ops notifications</li>
+      <li><b>EHR/EMR (Phase 4):</b> secure, limited-scope API integration if available</li>
+    </ul>
+
+    <h2>4) Security & Governance Guardrails</h2>
+    <div class="box">
+      <ul>
+        <li>Least-privilege credentials per integration</li>
+        <li>Read/summarize by default; write/delete requires explicit approvals</li>
+        <li>Private channels for sensitive content; avoid broad PHI exposure</li>
+        <li>Action logging + weekly audit for accountability</li>
+      </ul>
+    </div>
+
+    <h2>5) 90-Day Rollout</h2>
+    <h3>Phase 1 (Weeks 1–2): Foundation</h3>
+    <ul><li>Workflow mapping, role boundaries, channel setup, guardrails</li><li>Heartbeat checks with low-noise policy</li></ul>
+    <h3>Phase 2 (Weeks 3–4): Assistive Automation</h3>
+    <ul><li>Message triage, scheduling alerts, owner daily summaries</li></ul>
+    <h3>Phase 3 (Weeks 5–8): Workflow Automation</h3>
+    <ul><li>Checklist automation, escalation logic, reporting cadence</li></ul>
+    <h3>Phase 4 (Weeks 9–12): Deep Integration</h3>
+    <ul><li>Expanded integrations + refined SOPs + team enablement</li></ul>
+
+    <h2>6) High-Value PT Use Cases</h2>
+    <ol>
+      <li>No-show prevention loop and same-day refill scheduling</li>
+      <li>Authorization deadline monitoring before visits lapse</li>
+      <li>Referral pipeline follow-up and stale lead detection</li>
+      <li>Provider load balancing and schedule risk alerts</li>
+      <li>Owner command-center summaries (single-message visibility)</li>
+    </ol>
+
+    <h2>7) KPI Scorecard</h2>
+    <ul>
+      <li>Average response time to inbound patient/admin messages</li>
+      <li>No-show rate and cancellation fill rate</li>
+      <li>Unresolved tasks over 24 hours</li>
+      <li>Weekly admin hours saved</li>
+      <li>Escalation-to-resolution time</li>
+    </ul>
+
+    <h2>8) Implementation Checklist</h2>
+    <div class="box teal">
+      <ul>
+        <li>Define scope + "can/can't do" policy</li>
+        <li>Connect Calendar + Gmail with secured credentials</li>
+        <li>Create front-desk and owner alert channels</li>
+        <li>Deploy heartbeat + cron checks</li>
+        <li>Run weekly KPI review and tuning</li>
+      </ul>
+    </div>
+
+    <div class="footer">Prepared for PT clinic operations modernization • OpenClaw Integration Blueprint • v1.0</div>
+  </div>
+</body>
+</html>

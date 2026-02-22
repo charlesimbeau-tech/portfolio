@@ -1,0 +1,8 @@
+C:\Users\Owner-CF.Owner-CF-PC\.openclaw\workspace\portfolio\blog.html:6:   <title>Blog - Charles Imbeau</title>
+C:\Users\Owner-CF.Owner-CF-PC\.openclaw\workspace\portfolio\blog.html:60:         <li><a href="/blog.html">Blog</a></li>
+C:\Users\Owner-CF.Owner-CF-PC\.openclaw\workspace\portfolio\blog.html:71:       <h1>Blog</h1>
+C:\Users\Owner-CF.Owner-CF-PC\.openclaw\workspace\portfolio\case-studies.html:24:         <li><a href="/blog.html">Blog</a></li>
+C:\Users\Owner-CF.Owner-CF-PC\.openclaw\workspace\portfolio\index.html:39:         <li><a href="blog.html">Blog</a></li>
+C:\Users\Owner-CF.Owner-CF-PC\.openclaw\workspace\portfolio\index.html:71:             <p style="font-size: 16px; opacity: 0.8; margin-bottom: 20px;">A full-featured game deals aggregator. Real-time data from 15+ sources, automated caching, powerful search and filtering, and SEO-optimized blog content.</p>
+C:\Users\Owner-CF.Owner-CF-PC\.openclaw\workspace\portfolio\TEMPLATE.html:26:         <li><a href="/blog.html">Blog</a></li>
+C:\Users\Owner-CF.Owner-CF-PC\.openclaw\workspace\portfolio\testimonials.html:24:         <li><a href="/blog.html">Blog</a></li>

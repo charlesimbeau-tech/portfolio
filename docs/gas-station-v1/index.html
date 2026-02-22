@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Gas Station v1</title>
+  <style>
+    html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(circle at 50% 20%,#11244d 0,#0a1838 60%,#08132e 100%);font-family:Inter,system-ui,sans-serif;color:#fff}
+    .hud{position:fixed;left:10px;right:10px;top:10px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 10px;z-index:20}
+    .row{display:flex;justify-content:space-between;gap:8px}.muted{opacity:.85}
+    .photo{position:fixed;right:10px;bottom:12px;z-index:30;background:#1d4ed8;color:#fff;border:none;padding:9px 12px;border-radius:10px;font-weight:600}
+    .hideHud .hud,.hideHud .photo{display:none}
+
+    .stage{position:absolute;inset:0;display:grid;place-items:center;perspective:1300px}
+    .world{width:360px;height:480px;transform-style:preserve-3d;transform:rotateX(-16deg) rotateY(-22deg) scale(1);will-change:transform}
+
+    .lot{position:absolute;left:50%;top:58%;width:620px;height:420px;transform:translate(-50%,-50%) rotateX(78deg);border-radius:18px;background:linear-gradient(180deg,#3a4557,#232d3f);box-shadow:0 0 80px rgba(90,140,255,.2)}
+    .lane{position:absolute;left:50%;top:58%;width:370px;height:8px;transform:translate(-50%,-50%) rotateX(78deg);background:#f8fafc33;box-shadow:0 44px 0 #f8fafc33,0 -44px 0 #f8fafc33}
+
+    /* Canopy */
+    .canopy{position:absolute;left:50%;top:30%;width:290px;height:18px;transform:translate(-50%,-50%);background:linear-gradient(90deg,#ef4444,#dc2626);border-radius:6px;box-shadow:0 8px 0 rgba(255,255,255,.15) inset}
+    .canopy::before{content:'';position:absolute;inset:3px;background:#f8fafc;border-radius:4px}
+    .col{position:absolute;width:12px;height:138px;background:linear-gradient(180deg,#e5e7eb,#cfd5de)}
+    .c1{left:80px;top:30%}.c2{right:80px;top:30%}
+
+    /* Pump island */
+    .island{position:absolute;left:50%;top:54%;width:230px;height:54px;transform:translate(-50%,-50%) rotateX(78deg);background:#aab2bf;border-radius:8px}
+    .pump{position:absolute;width:72px;height:120px;background:linear-gradient(180deg,#f4f6f9,#d9dee7);border-radius:5px;box-shadow:inset 0 0 0 1px #cfd6e1}
+    .p1{left:122px;top:190px}.p2{left:205px;top:190px}
+    .pump .stripe{position:absolute;left:0;right:0;top:8px;height:9px;background:linear-gradient(90deg,#1d4ed8,#60a5fa)}
+    .pump .screen{position:absolute;left:50%;top:24px;transform:translateX(-50%);width:38px;height:24px;background:#9fd1ff;border:2px solid #111827;border-radius:4px}
+    .pump .hose{position:absolute;right:-8px;top:40px;width:8px;height:48px;border:4px solid #111827;border-left:none;border-radius:0 10px 10px 0}
+
+    /* Store */
+    .store{position:absolute;left:50%;top:73%;width:270px;height:120px;transform:translate(-50%,-50%);background:linear-gradient(180deg,#dbe2ec,#bfc8d6);border-radius:6px;box-shadow:inset 0 0 0 1px #aeb8c6}
+    .store .band{position:absolute;left:0;right:0;top:0;height:16px;background:linear-gradient(90deg,#2563eb,#60a5fa)}
+    .store .door{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:54px;height:72px;background:#7fb6ec;border:3px solid #1f2937;border-bottom:none}
+    .store .win{position:absolute;top:35px;width:52px;height:36px;background:#9dc8f1;border:3px solid #1f2937}
+    .store .w1{left:18px}.store .w2{right:18px}
+
+    /* Car */
+    .car{position:absolute;left:84px;top:236px;width:132px;height:48px;transform:rotate(-3deg)}
+    .car .body{position:absolute;left:0;right:0;bottom:8px;height:30px;background:linear-gradient(180deg,#2563eb,#1d4ed8);border-radius:9px}
+    .car .roof{position:absolute;left:26px;right:26px;top:0;height:20px;background:linear-gradient(180deg,#3b82f6,#2563eb);border-radius:10px 10px 4px 4px}
+    .car .glass{position:absolute;left:34px;right:34px;top:4px;height:12px;background:#9fd1ff;border-radius:6px}
+    .wheel{position:absolute;bottom:0;width:20px;height:20px;border-radius:50%;background:#111827;box-shadow:inset 0 0 0 4px #6b7280}
+    .wfl{left:20px}.wfr{right:20px}
+
+    /* Extra details */
+    .sign{position:absolute;left:18px;top:18px;padding:5px 8px;border-radius:6px;background:#111827cc;font:700 10px Inter,sans-serif}
+  </style>
+</head>
+<body>
+  <div class="hud"><div class="row"><strong>Gas Station v1</strong><span class="muted">Interactive</span></div><div class="muted">Drag rotate • pinch zoom • tap Photo mode</div></div>
+  <button class="photo" id="photoBtn">Photo mode</button>
+
+  <div class="stage">
+    <div class="world" id="world">
+      <div class="lot"></div><div class="lane"></div>
+      <div class="canopy"></div><div class="col c1"></div><div class="col c2"></div>
+      <div class="island"></div>
+      <div class="pump p1"><div class="stripe"></div><div class="screen"></div><div class="hose"></div></div>
+      <div class="pump p2"><div class="stripe"></div><div class="screen"></div><div class="hose"></div></div>
+      <div class="car"><div class="roof"></div><div class="glass"></div><div class="body"></div><div class="wheel wfl"></div><div class="wheel wfr"></div></div>
+      <div class="store"><div class="band"></div><div class="sign">OPEN 24/7</div><div class="win w1"></div><div class="win w2"></div><div class="door"></div></div>
+    </div>
+  </div>
+
+  <script>
+    const world=document.getElementById('world');
+    let rx=-16, ry=-22, scale=1, vx=0, vy=0;
+    let touching=false,lx=0,ly=0,startDist=0,startScale=1;
+    const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+    const apply=()=>world.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`;
+    function dist(t1,t2){const dx=t1.clientX-t2.clientX,dy=t1.clientY-t2.clientY;return Math.hypot(dx,dy)}
+
+    addEventListener('touchstart',e=>{
+      if(e.touches.length===1){touching=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;vx=0;vy=0;}
+      if(e.touches.length===2){startDist=dist(e.touches[0],e.touches[1]);startScale=scale;}
+    },{passive:true});
+
+    addEventListener('touchmove',e=>{
+      if(e.touches.length===1&&touching){const x=e.touches[0].clientX,y=e.touches[0].clientY;const dx=x-lx,dy=y-ly;ry+=dx*0.28;rx-=dy*0.2;rx=clamp(rx,-42,30);vx=dx*0.09;vy=-dy*0.08;lx=x;ly=y;apply();}
+      if(e.touches.length===2){const d=dist(e.touches[0],e.touches[1]);scale=clamp(startScale*(d/startDist),0.72,1.75);apply();}
+    },{passive:true});
+    addEventListener('touchend',()=>touching=false,{passive:true});
+
+    function tick(){if(!touching){ry+=vx;rx=clamp(rx+vy,-42,30);vx*=0.94;vy*=0.94;apply();}requestAnimationFrame(tick)}
+    apply();tick();
+
+    document.getElementById('photoBtn').onclick=()=>document.body.classList.toggle('hideHud');
+  </script>
+</body>
+</html>

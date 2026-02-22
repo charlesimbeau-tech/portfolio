@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenClaw Setup Guide — ProMotion Rehab & Sports Medicine</title>
+  <style>
+    :root {
+      --navy: #0b1f3a;
+      --blue: #1f6feb;
+      --teal: #12b3a8;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --bg: #f8fbff;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      line-height: 1.56;
+      background: #fff;
+    }
+    .page {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 42px 54px;
+    }
+    .cover {
+      background: linear-gradient(135deg, var(--navy), #143c74 55%, #1a5aa8);
+      color: white;
+      border-radius: 18px;
+      padding: 36px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(11, 31, 58, 0.25);
+    }
+    .cover h1 { margin: 0 0 8px; font-size: 34px; letter-spacing: -0.02em; }
+    .cover p { margin: 0; color: #dbeafe; }
+    .chip {
+      display: inline-block;
+      margin-top: 12px;
+      background: rgba(18, 179, 168, 0.2);
+      color: #ccfbf1;
+      border: 1px solid rgba(18, 179, 168, 0.55);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    h2 {
+      margin-top: 32px;
+      font-size: 22px;
+      color: var(--navy);
+      border-bottom: 2px solid #dbeafe;
+      padding-bottom: 7px;
+    }
+    h3 { margin-top: 20px; font-size: 17px; color: #0f3a6d; }
+    p { margin: 9px 0; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .stat {
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .stat strong {
+      display: block;
+      color: #a7f3d0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .box {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 12px 0;
+    }
+    .teal { border-left-color: var(--teal); }
+    code {
+      font-family: Consolas, "Cascadia Code", monospace;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 13px;
+      border-radius: 10px;
+      overflow: auto;
+      font-size: 13px;
+    }
+    .footer {
+      margin-top: 34px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media print {
+      .page { padding: 26px 34px; }
+      h2, h3 { page-break-after: avoid; }
+      .box, pre { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="cover">
+      <h1>OpenClaw Setup Guide</h1>
+      <p>ProMotion Rehab & Sports Medicine — Small Business Operations Edition</p>
+      <span class="chip">Clinical Operations • Patient Communication • Reliability</span>
+      <div class="stats">
+        <div class="stat"><strong>Faster</strong>Front-desk response workflows</div>
+        <div class="stat"><strong>Cleaner</strong>Daily operational check-ins</div>
+        <div class="stat"><strong>Safer</strong>Controlled automations & approvals</div>
+      </div>
+    </section>
+
+    <h2>1) Why OpenClaw for Rehab & Sports Medicine</h2>
+    <p>This setup helps a clinic team stay on top of communication and operations while keeping workflows lightweight and predictable.</p>
+    <ul>
+      <li>Monitor DMs/channels for urgent patient-facing issues</li>
+      <li>Catch service downtime and update needs quickly</li>
+      <li>Automate repetitive status checks and reminders</li>
+      <li>Reduce admin load so staff can stay focused on care delivery</li>
+    </ul>
+
+    <h2>2) High-Value Clinic Use Cases</h2>
+    <ol>
+      <li><strong>Front Desk Alerts:</strong> identify urgent inbound messages and escalate.</li>
+      <li><strong>Operations Health:</strong> monitor gateway, cron, and publish/update jobs.</li>
+      <li><strong>Owner Summary:</strong> send concise daily status snapshots.</li>
+      <li><strong>Team Handoff:</strong> keep a consistent runbook for starts/stops/troubleshooting.</li>
+    </ol>
+
+    <h2>3) Install & Start (Production-Safe Basics)</h2>
+    <h3>Install / Update</h3>
+    <pre>npm install -g openclaw</pre>
+
+    <h3>Verify version</h3>
+    <pre>openclaw --version</pre>
+
+    <h3>Start gateway service</h3>
+    <pre>openclaw gateway start
+openclaw gateway status</pre>
+
+    <div class="box teal">
+      <strong>Update protocol (recommended):</strong>
+      <pre>openclaw gateway stop
+npm install -g openclaw
+openclaw gateway start</pre>
+    </div>
+
+    <h2>4) Business Configuration Checklist</h2>
+    <ul>
+      <li>Define assistant tone: professional, concise, and escalation-aware</li>
+      <li>Connect approved channels only (start with one team channel + owner DM)</li>
+      <li>Set heartbeat checks to “alert only when noteworthy”</li>
+      <li>Document a 1-page incident procedure (downtime, updates, auth failures)</li>
+      <li>Use explicit approvals for destructive/public actions</li>
+    </ul>
+
+    <h2>5) Daily Operating Cadence</h2>
+    <div class="box">
+      <p><strong>Morning:</strong> gateway status, urgent messages, same-day calendar conflicts.</p>
+      <p><strong>Midday:</strong> service health + pending task review.</p>
+      <p><strong>End of Day:</strong> unresolved items summary and next-day priorities.</p>
+    </div>
+
+    <h2>6) Security & Compliance Mindset</h2>
+    <ul>
+      <li>Use least-privilege credentials and role-based access</li>
+      <li>Avoid sending sensitive personal/clinical data through broad channels</li>
+      <li>Review logs regularly for repeated failures or auth errors</li>
+      <li>Keep OpenClaw version current and patch known issues quickly</li>
+    </ul>
+
+    <h2>7) Troubleshooting Fast Path</h2>
+    <h3>If gateway shows “loaded but not running”</h3>
+    <pre>openclaw gateway status
+openclaw gateway start
+openclaw status</pre>
+
+    <h3>If auth checks fail (e.g., Google API)</h3>
+    <p>Use your own OAuth app credentials and add your owner account as an approved test user if app is in testing mode.</p>
+
+    <h2>8) 30-Day Rollout Plan</h2>
+    <ol>
+      <li><strong>Week 1:</strong> stable install + channels + baseline heartbeats</li>
+      <li><strong>Week 2:</strong> add automation for update and service alerts</li>
+      <li><strong>Week 3:</strong> refine escalation and summary formatting</li>
+      <li><strong>Week 4:</strong> review time saved and missed-issue reduction</li>
+    </ol>
+
+    <div class="footer">
+      Prepared for ProMotion Rehab & Sports Medicine • OpenClaw Setup Guide • v2 Branded Edition
+    </div>
+  </div>
+</body>
+</html>

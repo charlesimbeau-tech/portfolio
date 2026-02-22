@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Gas Pump v6</title>
+  <style>
+    html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(circle at 50% 20%,#10204a 0,#0a1534 55%,#07102a 100%);font-family:Inter,system-ui,sans-serif;color:#fff}
+    .hud{position:fixed;left:10px;right:10px;top:10px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 10px;z-index:20}
+    .row{display:flex;justify-content:space-between;gap:8px}.muted{opacity:.85}
+    .stage{position:absolute;inset:0;display:grid;place-items:center;perspective:1200px}
+    .world{width:300px;height:420px;transform-style:preserve-3d;transform:rotateX(-8deg) rotateY(-26deg) scale(1);will-change:transform}
+    .base{position:absolute;left:50%;top:62%;width:360px;height:240px;transform:translate(-50%,-50%) rotateX(80deg);border-radius:50%;background:radial-gradient(circle,#1e355f 0,#13284d 50%,#0e1f3f 80%);box-shadow:0 0 60px rgba(80,130,255,.25)}
+
+    .pump{position:absolute;left:50%;top:52%;width:150px;height:255px;transform-style:preserve-3d;transform:translate(-50%,-50%)}
+    .face{position:absolute;inset:0;border-radius:4px}
+    .front{transform:translateZ(48px);background:linear-gradient(180deg,#f4f6f9,#d9dee7)}
+    .back{transform:rotateY(180deg) translateZ(48px);background:linear-gradient(180deg,#e7ebf2,#cfd5df)}
+    .left{width:96px;left:-48px;transform:rotateY(-90deg) translateZ(48px);background:linear-gradient(180deg,#dfe4ed,#c7ced9)}
+    .right{width:96px;right:-48px;left:auto;transform:rotateY(90deg) translateZ(48px);background:linear-gradient(180deg,#dfe4ed,#c7ced9)}
+    .top{height:96px;top:-48px;transform:rotateX(90deg) translateZ(48px);background:linear-gradient(90deg,#f14444,#c51f1f)}
+    .bottom{height:96px;bottom:-48px;top:auto;transform:rotateX(-90deg) translateZ(207px);background:#aab2bf}
+
+    .brand{position:absolute;left:0;right:0;top:14px;height:14px;background:linear-gradient(90deg,#1d4ed8,#60a5fa)}
+    .screenWrap{position:absolute;left:50%;top:34px;transform:translateX(-50%);width:90px;height:58px;background:#1f2937;border-radius:6px;padding:4px;box-shadow:inset 0 0 0 2px #111827}
+    .screen{width:100%;height:100%;border-radius:4px;background:linear-gradient(180deg,#b9ddff,#88bfff);position:relative;overflow:hidden}
+    .digits{position:absolute;left:6px;top:6px;font:700 13px/1.1 monospace;color:#0b2b4a;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+
+    .panel{position:absolute;left:50%;top:104px;transform:translateX(-50%);width:98px;height:72px;background:#374151;border-radius:6px;box-shadow:inset 0 0 0 2px #1f2937}
+    .btn{position:absolute;width:18px;height:11px;background:#9ca3af;border-radius:2px;box-shadow:0 1px 0 #6b7280}
+
+    .octane{position:absolute;left:8px;bottom:8px;display:grid;gap:4px}
+    .tag{font:700 9px/1.1 Inter,sans-serif;padding:3px 5px;border-radius:4px;color:#fff}
+    .o87{background:#16a34a}.o89{background:#ca8a04}.o93{background:#dc2626}
+
+    .door{position:absolute;left:50%;top:186px;transform:translateX(-50%);width:102px;height:58px;background:#d2d7e0;border-radius:4px;box-shadow:inset 0 0 0 2px #bcc4d1}
+
+    .hose{position:absolute;right:-20px;top:108px;width:20px;height:108px;border:7px solid #0f172a;border-left:none;border-radius:0 20px 20px 0}
+    .nozzle{position:absolute;right:-18px;top:206px;width:34px;height:11px;background:#111827;border-radius:3px;transform:rotate(24deg)}
+    .handle{position:absolute;right:-6px;top:192px;width:12px;height:28px;border:4px solid #111827;border-left:none;border-radius:0 6px 6px 0}
+
+    .pedestal{position:absolute;left:50%;top:84%;width:88px;height:88px;transform:translate(-50%,-50%) rotateX(82deg);background:#9ca3af}
+
+    .photo{position:fixed;right:10px;bottom:12px;z-index:30;background:#1d4ed8;color:#fff;border:none;padding:9px 12px;border-radius:10px;font-weight:600}
+    .hideHud .hud,.hideHud .photo{display:none}
+  </style>
+</head>
+<body>
+  <div class="hud"><div class="row"><strong>Gas Pump v6</strong><span id="status" class="muted">Interactive</span></div><div class="muted">Drag rotate • pinch zoom • tap Photo Mode</div></div>
+  <button class="photo" id="photoBtn">Photo mode</button>
+  <div class="stage"><div class="world" id="world"><div class="base"></div><div class="pump" id="pump">
+    <div class="face front"><div class="brand"></div><div class="screenWrap"><div class="screen"><div class="digits">$3.49<br>12.34 gal</div></div></div><div class="panel" id="panel"></div><div class="octane"><span class="tag o87">87</span><span class="tag o89">89</span><span class="tag o93">93</span></div><div class="door"></div><div class="hose"></div><div class="handle"></div><div class="nozzle"></div></div>
+    <div class="face back"></div><div class="face left"></div><div class="face right"></div><div class="face top"></div><div class="face bottom"></div>
+  </div><div class="pedestal"></div></div></div>
+
+  <script>
+    const panel=document.getElementById('panel');
+    for(let r=0;r<3;r++){for(let c=0;c<4;c++){const b=document.createElement('div');b.className='btn';b.style.left=(10+c*22)+'px';b.style.top=(8+r*19)+'px';panel.appendChild(b);}}
+
+    const world=document.getElementById('world');
+    let rx=-8, ry=-26, scale=1, vx=0, vy=0;
+    let touching=false,lx=0,ly=0,startDist=0,startScale=1,lastMove=0;
+    const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+    const apply=()=>{world.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`;};
+
+    function dist(t1,t2){const dx=t1.clientX-t2.clientX,dy=t1.clientY-t2.clientY;return Math.hypot(dx,dy)}
+
+    addEventListener('touchstart',e=>{
+      if(e.touches.length===1){touching=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;vx=0;vy=0;}
+      if(e.touches.length===2){startDist=dist(e.touches[0],e.touches[1]);startScale=scale;}
+    },{passive:true});
+
+    addEventListener('touchmove',e=>{
+      const now=performance.now();
+      if(e.touches.length===1&&touching){const x=e.touches[0].clientX,y=e.touches[0].clientY;const dx=x-lx,dy=y-ly;ry+=dx*0.34;rx-=dy*0.24;rx=clamp(rx,-40,36);vx=dx*0.12;vy=-dy*0.1;lx=x;ly=y;lastMove=now;apply();}
+      if(e.touches.length===2){const d=dist(e.touches[0],e.touches[1]);scale=clamp(startScale*(d/startDist),0.72,1.95);apply();}
+    },{passive:true});
+
+    addEventListener('touchend',()=>{touching=false;},{passive:true});
+
+    function tick(){
+      if(!touching){ry+=vx;rx=clamp(rx+vy,-40,36);vx*=0.94;vy*=0.94;if(Math.abs(vx)<.002)vx=0;if(Math.abs(vy)<.002)vy=0;apply();}
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    document.getElementById('photoBtn').onclick=()=>document.body.classList.toggle('hideHud');
+  </script>
+</body>
+</html>
